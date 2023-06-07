@@ -1,0 +1,7 @@
+FROM apache/airflow:2.6.1-python3.8
+RUN pip install --user --upgrade pip
+RUN pip install mysql-connector
+RUN pip install requests
+RUN pip install pandas
+RUN pip install yfinance
+RUN pip install -U finance-datareader
