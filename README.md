@@ -47,12 +47,12 @@ gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
 gazuaa가 수집하는 data flow는 다음과 같습니다.
 
 ```
-. \
-└──dags \
-      ├── kind.dag \
-      ├── base_info.dag \
-      ├── marketPrice.dag \
-      ├── currency.dag \
+. 
+└──dags 
+      ├── kind.dag 
+      ├── base_info.dag 
+      ├── marketPrice.dag 
+      ├── currency.dag 
       └── 기타 등등 
 ```
 ** kind.dag
