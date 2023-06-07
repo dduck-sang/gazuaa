@@ -12,7 +12,7 @@ Project overview
 
 - [Project 구조](#project-structure)
 - [개발환경](#requirements)
-- 
+- [
 ---
 
 ## Project structure
@@ -28,13 +28,17 @@ gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
 |             | Main version (dev)           |
 |-------------|------------------------------|
 | Python      | 3.8                          |
-| Platform    | AMD64/ARM64.                 | 
+| Platform    | AMD64/ARM64                  | 
 | Airflow     | 2.6.1                        |
 | PostgreSQL  | 12                           |
 | MySQL       | 5.7, 8                       | 
 | Hadoop      | 3.3.4                        |
 
 * note : 개발환경 기입하시오
+
+* note : 통합 개발환경 링크 
+      -> airflow : https://github.com/dduck-sang/gazuaa/issues/1#issue-1744926153
+      -> vim & zsh : https://github.com/dduck-sang/gazuaa/issues/2#issue-1744957934
 
 ---
 
