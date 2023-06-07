@@ -12,10 +12,11 @@ Project overview
 
 - [Project 구조](#project-structure)
 - [개발환경](#requirements)
-- [
+- [dag 구조](#dag-structure)
+- 
 ---
 
-## Project structure
+## Project Structure
 
 히히히 
 
@@ -40,5 +41,23 @@ gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
       -> airflow : https://github.com/dduck-sang/gazuaa/issues/1#issue-1744926153 \
       -> vim & zsh : https://github.com/dduck-sang/gazuaa/issues/2#issue-1744957934
 
----
 
+## Dag Structure
+
+gazuaa가 수집하는 data flow는 다음과 같습니다.
+
+. \
+└──dags \
+      ├── kind.dag \
+      ├── base_info.dag \
+      ├── marketPrice.dag \
+      ├── currency.dag \
+      └── 기타등등 
+      
+** kind.dag
+
+[ 사진 ]
+
+** base_info.dag 
+
+[ 사진 ]
