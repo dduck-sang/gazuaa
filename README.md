@@ -36,8 +36,8 @@ gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
 
 * note : 개발환경 기입하시오
 
-* note : 통합 개발환경 링크 
-      -> airflow : https://github.com/dduck-sang/gazuaa/issues/1#issue-1744926153
+* note : 통합 개발환경 링크 \
+      -> airflow : https://github.com/dduck-sang/gazuaa/issues/1#issue-1744926153 \
       -> vim & zsh : https://github.com/dduck-sang/gazuaa/issues/2#issue-1744957934
 
 ---
