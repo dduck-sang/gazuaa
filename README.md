@@ -29,7 +29,7 @@ gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
 |-------------|------------------------------|
 | Python      | 3.8                          |
 | Platform    | AMD64/ARM64.                 | 
-| Airflow.    | 2.6.1                        |
+| Airflow     | 2.6.1                        |
 | PostgreSQL  | 12                           |
 | MySQL       | 5.7, 8                       | 
 | Hadoop      | 3.3.4                        |
