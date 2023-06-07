@@ -10,12 +10,12 @@ Project overview
 
 **컨텐츠 목차**
 
-- [Project Focus](#project-focus)
+- [Project 구조](#project-structure)
 - [개발환경](#requirements)
-
+- 
 ---
 
-## Project Focus
+## Project structure
 
 히히히 
 
@@ -34,7 +34,7 @@ gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
 | MySQL       | 5.7, 8                       | 
 | Hadoop      | 3.3.4                        |
 
-* note : 개발환경은 이런식으로 
+* note : 개발환경 기입하시오
 
 ---
 
