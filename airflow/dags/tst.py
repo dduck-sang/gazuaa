@@ -5,9 +5,9 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
 
 default_args = {
-	"owner": "v0.0.1/woorek",
+	"owner": "230608/woorek",
 	"depends_on_past": "False",
-	"start_date": datetime(2023, 6, 7),
+	"start_date": datetime(2023, 6, 8),
 	"retries": 0
 }
 
