@@ -11,9 +11,10 @@ default_args = {
 	'start_date': datetime(2023,1,1),
 }
 
-dag = DAG('kind_dag', default_args = default_args, schedule_interval = '@once')
+dag = DAG('kospiCode_dag', default_args = default_args, schedule_interval = '@once')
 
-def fetch_kospi_code():
+def load_raw_code():
+	# 전자공시시스템에서 kospi 종목번호를 load 하여 column 붙이기
 	import pandas as pd
 	url = 'https://kind.krx.co.kr/corpgeneral/corpList.do'
 	kospi_code = pd.read_html(url + "?method=download&marketType=stockMkt")[0]
@@ -22,16 +23,19 @@ def fetch_kospi_code():
 	return kospi_code
 
 def convert_kospi_code(x):
+	# 종목번호를 ticker number에 맞게 변환
 	tmp_data = str(x)
 	return '0' * (6-len(tmp_data)) + tmp_data + '.KS'
 	
 
 def apply_kospi_code(**context):
+	# ticker number로 변환한 data를 기존 df에 붙여넣기 
 	convert_code = context['ti'].xcom_pull(task_ids='get_tmpKospi_code')
 	convert_code['종목코드'] = convert_code['종목코드'].apply(convert_kospi_code)
 	return convert_code
 
 def load_kospi_code(**context):
+	# 변환 완료된 data를 db server에 적재
 	import mysql.connector
 
 	final_data = context['ti'].xcom_pull(task_ids='convert_code')
@@ -48,9 +52,9 @@ def load_kospi_code(**context):
 		print(values)
 		
 		query = "INSERT INTO kospi_code (company_name, company_code) VALUES (\"%s\", \"%s\")" %(values[0], values[1])
-		print(query)
-		#cursor.execute(query, values)
-		#conn.commit()
+		#print(query)
+		cursor.execute(query)
+		conn.commit()
 	conn.close()
 
 
@@ -71,7 +75,7 @@ start_noti = BashOperator(
 
 get_rawCode = PythonOperator(
 	task_id = 'get_tmpKospi_code',
-	python_callable = fetch_kospi_code,
+	python_callable = load_raw_code,
 	dag = dag
 )
 
