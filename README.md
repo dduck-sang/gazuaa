@@ -55,9 +55,11 @@ gazuaa가 수집하는 data flow는 다음과 같습니다.
       ├── currency.dag 
       └── 기타 등등 
 ```
-** kind.dag
+<h5> kind.dag </h5>
+v0.0.1 : kospi 종목번호 ticker num. 으로 처리 \
+[pic]
 
-[ 사진 ]
+<img width="1128" alt="Screen Shot 2023-06-08 at 11 15 23 AM" src="https://github.com/dduck-sang/gazuaa/assets/23203791/ab2b4dea-4620-4139-8993-816fc7be263c">
 
 ** base_info.dag 
 
