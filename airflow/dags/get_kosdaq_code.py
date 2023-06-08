@@ -5,6 +5,7 @@ from airflow.operators.bash import BashOperator
 from airflow.models.variable import Variable
 from datetime import datetime
 
+
 default_args = {
 	'owner' : 'v0.0.2/gazuaa',
 	'depends_on_past' : False,
