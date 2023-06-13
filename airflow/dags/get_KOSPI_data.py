@@ -8,7 +8,7 @@ import pytz, pendulum
 KST = pendulum.timezone("Asia/Seoul")
 
 default_args ={
-	'owner' : 'yoda_jei',
+	'owner' : 'v0.0.5/gazua',
 	'depends_on_past' : True,
 	'start_date' : datetime(2023, 6, 1, tzinfo=KST)
 	#'start_date' : datetime(2023,6,1, tzinfo=pytz.timezone('Asia/Seoul'))
@@ -76,7 +76,7 @@ finish = EmptyOperator(
 	dag = dag)
 
 
-#시작 >> 노티 뿌리기 >> curl로 데이터 받아오기 >> .log로 레포트 수신 >> 데이터 정합성 check >> 끝
+# 시작 >> 노티 뿌리기 >> curl로 데이터 받아오기 >> .log로 레포트 수신 >> 데이터 정합성 check >> 끝
 # 의문점 .log에 떨어진 log 처리까지는 ok 이거 어떻게 던지냐 그게 관건
 # 의문점 데이터 정합성을 check하기 위한 방법? 다운 완료는 DONE 플래그 생성으로 check후 처리 
 # DONE_flag는 api server를 둔다. 이유는 다른 부서/회사로 부터 데이터를 받을때, listener server의 권한 문제로 일종의 미들웨어 개념으로 처리하는 하는 방식

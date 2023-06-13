@@ -8,7 +8,7 @@ import pytz, pendulum
 KST = pendulum.timezone("Asia/Seoul")
 
 default_args ={
-	'owner' : 'yoda_jei',
+	'owner' : 'v0.0.5/gazua',
 	'depends_on_past' : True,
 	'start_date' : datetime(2023, 6, 1, tzinfo=KST)
 	#'start_date' : datetime(2023,6,1, tzinfo=pytz.timezone('Asia/Seoul'))
