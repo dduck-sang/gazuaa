@@ -64,3 +64,5 @@ v0.0.1 : kospi 종목번호 ticker num. 으로 처리 \
 ** base_info.dag 
 
 [ 사진 ]
+
+airflow port : 1111
