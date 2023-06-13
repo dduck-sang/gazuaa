@@ -15,7 +15,7 @@ default_args ={
 }
 
 # utc 기준 7 시로 고치면 되긴함
-dag = DAG('get_kospoi_data', default_args = default_args, schedule_interval ='0 16 * * 1-5')
+dag = DAG('get_kosdaq_data', default_args = default_args, schedule_interval ='0 16 * * 1-5')
 
 
 #해당 날짜를 execution_date + 1일로 하여서, 받는 paramators 자체를 excution_date가 아닌 다른 걸로 핸들링
@@ -66,7 +66,7 @@ start = EmptyOperator(
 
 start_noti = gen_noti("start_dag_noti", "시작")
 
-get_kospi_data = get_priceData("get_KOSPI_DATA","192.168.90.128:1212/stock-price/kospi-all/day='{{ (execution_date + macros.timedelta(days=1)).strftime('%Y-%m-%d') }}'")
+get_kospi_data = get_priceData("get_KOSPI_DATA","192.168.90.128:1212/stock-price/kosdaq-all/day='{{ (execution_date + macros.timedelta(days=1)).strftime('%Y-%m-%d') }}'")
 #get_kospi_data = get_priceData("get_KOSPI_DATA", "192.168.90.128:1212/stock-price/kospi-all/day='exe_day'")
 
 finish_noti = gen_noti("finish_dag_noti", "종료")
