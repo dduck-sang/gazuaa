@@ -18,7 +18,7 @@ Project overview
 
 ## Project Structure
 
-히히히 
+데이터 수집 과정에서 airflow를 data flow에서 순수하 cordinator로 사용하기위해, 실제 데이터를 수집하고, merge하여, 원하는 데이터로 파티셔닝 하는 과정을 api 서버로 구축하였습니다. 
 
 ---
 
