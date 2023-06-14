@@ -26,16 +26,15 @@ Project overview
 
 gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
 
-|             | Main version (dev)           |
-|-------------|------------------------------|
-| Python      | 3.8                          |
-| Platform    | AMD64/ARM64                  | 
-| Airflow     | 2.6.1                        |
-| PostgreSQL  | 12                           |
-| MySQL       | 5.7, 8                       | 
-| Hadoop      | 3.3.4                        |
-| Uvicorn     | 0.22.0                       |
-| FastAPI     | 0.95.2                       |
+|             | Main version (dev)           |             | Main version (dev)           |
+|-------------|------------------------------|-------------|------------------------------|
+| Python      | 3.8                          | Uvicorn     | 0.22.0                       |
+| Platform    | AMD64/ARM64                  | FastAPI     | 0.95.2                       |
+| Airflow     | 2.6.1                        |             |                              |
+| PostgreSQL  | 12                           |             |                              |
+| MySQL       | 5.7, 8                       |             |                              |
+| Hadoop      | 3.3.4                        |             |                              |
+
 
 * note : 개발환경 기입하시오
 
