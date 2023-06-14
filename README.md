@@ -34,6 +34,8 @@ gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
 | PostgreSQL  | 12                           |
 | MySQL       | 5.7, 8                       | 
 | Hadoop      | 3.3.4                        |
+| Uvicorn     | 0.22.0                       |
+| FastAPI     | 0.95.2                       |
 
 * note : 개발환경 기입하시오
 
