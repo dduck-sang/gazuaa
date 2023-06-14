@@ -187,7 +187,7 @@ async def get_dayData(exe_day: str):
         info_num = ticker_no.split('.')[0]
         to_date = start_date[5:7] + start_date[8:10]
 
-        data = yf.download(tickers=ticker_no, start=start_date, end=next_date, interval='1d')
+        data = yf.download(tickers=ticker_no, start=start_date, end=next_date, interval='1m')
         #/home/yoda/stock/price_data/KOSPI/minute/2023/0613/005930.csv
         file_path = "/home/yoda/stock/price_data/{}/{}/{}/{}/{}.csv".format(market_name, dataPeriod,now_year, to_date, info_num)
         directory = os.path.dirname(file_path)
