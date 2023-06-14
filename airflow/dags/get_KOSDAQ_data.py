@@ -9,7 +9,7 @@ KST = pendulum.timezone("Asia/Seoul")
 
 default_args ={
 	'owner' : 'v0.0.5/gazua',
-	'depends_on_past' : True,
+	'depends_on_past' : False,
 	'start_date' : datetime(2023, 6, 1, tzinfo=KST)
 	#'start_date' : datetime(2023,6,1, tzinfo=pytz.timezone('Asia/Seoul'))
 }
@@ -91,10 +91,10 @@ get_kospi_data = get_priceData("get_KOSPI_DATA","192.168.90.128:1212/stock-price
 finish_noti1 = gen_noti("finish_dag_noti1", "종료", "all_success")
 finish_noti2 = gen_noti("finish_dag_noti2", "휴장일","one_failed")
 
-"""finish = EmptyOperator(
+finish = EmptyOperator(
 	task_id = 'finish',
-	dag = dag)"""
-
+	trigger_rule ='all_done',
+	dag = dag)
 
 #시작 >> 노티 뿌리기 >> curl로 데이터 받아오기 >> .log로 레포트 수신 >> 데이터 정합성 check >> 끝
 # 의문점 .log에 떨어진 log 처리까지는 ok 이거 어떻게 던지냐 그게 관건
@@ -103,3 +103,4 @@ finish_noti2 = gen_noti("finish_dag_noti2", "휴장일","one_failed")
 # start >> start_noti >> get_kospi_data >> finish_noti1 >> finish
 start >> start_noti >> market_calendar >> get_kospi_data >> finish_noti1
 start >> start_noti >> market_calendar >> finish_noti2
+[finish_noti1, finish_noti2] >> finish
