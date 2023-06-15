@@ -197,6 +197,54 @@ async def get_dayData(exe_day: str):
 
         data.to_csv(file_path)
 
+    done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
+    open(done_file, "w").close()
+
+
+async def get_day_price(exe_day:str):
+    # 함수들
+    logging.info("당일 코스피 [일봉] 종목 수집 실행")
+
+    import mysql.connector
+
+    conn = mysql.connector.connect(user='stock', password= '1234', host='192.168.90.128', database = 'stock', port = '3306', auth_plugin='mysql_native_password')
+
+    start_date = exe_day
+    market_name = 'KOSPI'
+
+    cursor = conn.cursor()
+    query = 'select company_code from kospi_code'
+    cursor.execute(query)
+    result = cursor.fetchall()
+    conn.close()
+
+    ticker_list = [row[0] for row in result]
+
+    for num in range(len(ticker_list)):
+        ticker_no = ticker_list[num]
+        dataPeriod ="day"
+
+        start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
+        next_date = datetime.strftime(start_datetime + timedelta(days=1), "%Y-%m-%d")
+
+        now_year = start_date.split('-')[0]
+        info_num = ticker_no.split('.')[0]
+        to_date = start_date[5:7] + start_date[8:10]
+
+        data = yf.download(tickers=ticker_no, start=start_date, end=next_date, interval='1d')
+        #/home/yoda/stock/price_data/KOSPI/minute/2023/0613/005930.csv
+        file_path = "/home/yoda/stock/price_data/{}/{}/{}/{}/{}.csv".format(market_name, dataPeriod,now_year, to_date, info_num)
+        directory = os.path.dirname(file_path)
+
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        data.to_csv(file_path)
 
     done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
     open(done_file, "w").close()
+
+
+@app.get("stock-price/kospi-once/day={exe_day}")
+async def get_kospi_onceData(exe_day: str):
+    await get_day_price(exe_day)
