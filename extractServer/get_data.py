@@ -197,5 +197,6 @@ async def get_dayData(exe_day: str):
 
         data.to_csv(file_path)
 
+
     done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
     open(done_file, "w").close()

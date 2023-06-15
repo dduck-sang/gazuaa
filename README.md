@@ -6,6 +6,7 @@ Project overview
 수집한 다양한 금융정보 data를 적재하여, 주가정보 dashboard 및 의사결정에 도움이 되는 다양한 지표를 구현해봅니다. \
 적재된 data를 외부로 부터 제공하는 api 를 빌드 해보는 걸 목표로 가지고있습니다.
 
+
 ---
 
 **컨텐츠 목차**
@@ -18,7 +19,7 @@ Project overview
 
 ## Project Structure
 
-히히히 
+데이터 수집 과정에서 airflow를 data flow에서 순수하 cordinator로 사용하기위해, 실제 데이터를 수집하고, merge하여, 원하는 데이터로 파티셔닝 하는 과정을 api 서버로 구축하였습니다. 
 
 ---
 
@@ -26,14 +27,15 @@ Project overview
 
 gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
 
-|             | Main version (dev)           |
-|-------------|------------------------------|
-| Python      | 3.8                          |
-| Platform    | AMD64/ARM64                  | 
-| Airflow     | 2.6.1                        |
-| PostgreSQL  | 12                           |
-| MySQL       | 5.7, 8                       | 
-| Hadoop      | 3.3.4                        |
+|             | Main version (dev)           |             | Main version (dev)           |
+|-------------|------------------------------|-------------|------------------------------|
+| Python      | 3.8                          | Uvicorn     | 0.22.0                       |
+| Platform    | AMD64/ARM64                  | FastAPI     | 0.95.2                       |
+| Airflow     | 2.6.1                        | Docker      | 24.0.2                       |
+| PostgreSQL  | 12                           |             |                              |
+| MySQL       | 5.7, 8                       |             |                              |
+| Hadoop      | 3.3.4                        |             |                              |
+
 
 * note : 개발환경 기입하시오
 
