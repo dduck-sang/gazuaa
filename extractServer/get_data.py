@@ -13,9 +13,10 @@ current_date = datetime.now(tz=korean_tz).strftime("%y%m%d")
 log_file_path = f"/home/yoda/stock/price_data/logs/{current_date}.log"
 
 logging.basicConfig(
-    filename=log_file_path,
-)
+    filename=log_file_path,)
 
+
+# 환율 정보 수집기
 async def get_currency(start_date:str,end_date:str):
 
     currency_list = ['USDEUR=X', 'USDGBP=X', 'USDJPY=X', 'USDCHF=X', 'USDCAD=X', \
@@ -51,6 +52,7 @@ async def get_currency(start_date:str,end_date:str):
 async def get_currency_info_route(start_date:str, end_date:str):
     await get_currency(start_date, end_date)
 
+# 회사 정보 수집기
 async def get_companyInfo():
 
     current_time = datetime.now() - timedelta(day=1)
@@ -81,38 +83,7 @@ async def get_companyInfo():
 async def get_company_info_route():
     await get_companyInfo()
 
-async def list_ticker(exe_day: str):
-
-    logging.info("당일 코스피 종목 수집 실행")
-
-    import mysql.connector
-
-    start_date = exe_day
-    market_name = 'KOSPI'
-
-    cursor = conn.cursor()
-    query = 'select company_code from kospi_code'
-    cursor.execute(query)
-    result = cursor.fetchall()
-    ticker_list = [row[0] for row in result]
-
-    for num in range(len(ticker_list)):
-        ticker_no = ticker_list[num]
-        dataPeriod ="minute"
-
-        start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
-        next_date = datetime.strftime(start_datetime + timedelta(days=1), "%Y-%m-%d")
-
-        now_year = start_date.split('-')[0]
-        info_num = ticker_no.split('.')[0]
-        to_date = start_date[5:7] + start_date[8:10]
-
-
-        directory = os.path.dirname(file_path)
-
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
+#kosdaq 당일 분봉 수집기
 @app.get("/stock-price/kosdaq-all/day={exe_day}")
 async def list_ticker(exe_day: str):
 
@@ -156,6 +127,7 @@ async def list_ticker(exe_day: str):
     done_file = "/home/yoda/stock/price_data/KOSDAQ/minute/2023/{}/DONE".format(to_date)
     open(done_file, "w").close()
 
+#kospi 당일 분봉 수집기
 @app.get("/stock-price/kospi-all/day={exe_day}")
 async def get_dayData(exe_day: str):
 
@@ -200,8 +172,8 @@ async def get_dayData(exe_day: str):
     done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
     open(done_file, "w").close()
 
-
-async def get_day_price(exe_day:str):
+#kospi 당일 일봉 수집기
+async def get_day_KSprice(exe_day:str):
     # 함수들
     logging.info("당일 코스피 [일봉] 종목 수집 실행")
 
@@ -244,7 +216,54 @@ async def get_day_price(exe_day:str):
     done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
     open(done_file, "w").close()
 
-
 @app.get("stock-price/kospi-once/day={exe_day}")
 async def get_kospi_onceData(exe_day: str):
-    await get_day_price(exe_day)
+    await get_day_KSprice(exe_day)
+
+#kosdaq 당일 일봉 수집기
+async def get_day_KQprice(exe_day:str):
+    # 함수들
+    logging.info("당일 코스닥 [일봉] 종목 수집 실행")
+
+    import mysql.connector
+
+    conn = mysql.connector.connect(user='stock', password= '1234', host='192.168.90.128', database = 'stock', port = '3306', auth_plugin='mysql_native_password')
+
+    start_date = exe_day
+    market_name = 'KOSPI'
+
+    cursor = conn.cursor()
+    query = 'select company_code from kospi_code'
+    cursor.execute(query)
+    result = cursor.fetchall()
+    conn.close()
+
+    ticker_list = [row[0] for row in result]
+
+    for num in range(len(ticker_list)):
+        ticker_no = ticker_list[num]
+        dataPeriod ="day"
+
+        start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
+        next_date = datetime.strftime(start_datetime + timedelta(days=1), "%Y-%m-%d")
+
+        now_year = start_date.split('-')[0]
+        info_num = ticker_no.split('.')[0]
+        to_date = start_date[5:7] + start_date[8:10]
+
+        data = yf.download(tickers=ticker_no, start=start_date, end=next_date, interval='1d')
+        #/home/yoda/stock/price_data/KOSPI/minute/2023/0613/005930.csv
+        file_path = "/home/yoda/stock/price_data/{}/{}/{}/{}/{}.csv".format(market_name, dataPeriod,now_year, to_date, info_num)
+        directory = os.path.dirname(file_path)
+
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        data.to_csv(file_path)
+
+    done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
+    open(done_file, "w").close()
+
+@app.get("stock-price/kospi-once/day={exe_day}")
+async def get_kosdaq_onceData(exe_day: str):
+    await et_day_KQprice(exe_day)
