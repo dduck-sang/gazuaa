@@ -3,7 +3,7 @@ import yfinance as yf
 from datetime import datetime, timedelta
 import pandas as pd
 import FinanceDataReader as fdr
-import os, pytz, logging
+import os, pytz, logging, zipfile
 
 app = FastAPI()
 
@@ -55,7 +55,7 @@ async def get_currency_info_route(start_date:str, end_date:str):
 # 회사 정보 수집기
 async def get_companyInfo():
 
-    current_time = datetime.now() - timedelta(day=1)
+    current_time = datetime.now() - timedelta(days=1)
 
     this_year = datetime.strftime(current_time, "%Y")
     this_month = datetime.strftime(current_time, "%m")
@@ -83,7 +83,7 @@ async def get_companyInfo():
 async def get_company_info_route():
     await get_companyInfo()
 
-#kosdaq 당일 분봉 수집기
+# kosdaq 당일 분봉 수집기
 @app.get("/stock-price/kosdaq-all/day={exe_day}")
 async def list_ticker(exe_day: str):
 
@@ -127,7 +127,7 @@ async def list_ticker(exe_day: str):
     done_file = "/home/yoda/stock/price_data/KOSDAQ/minute/2023/{}/DONE".format(to_date)
     open(done_file, "w").close()
 
-#kospi 당일 분봉 수집기
+# kospi 당일 분봉 수집기
 @app.get("/stock-price/kospi-all/day={exe_day}")
 async def get_dayData(exe_day: str):
 
@@ -172,7 +172,7 @@ async def get_dayData(exe_day: str):
     done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
     open(done_file, "w").close()
 
-#kospi 당일 일봉 수집기
+# kospi 당일 일봉 수집기
 async def get_day_KSprice(exe_day:str):
     # 함수들
     logging.info("당일 코스피 [일봉] 종목 수집 실행")
@@ -220,7 +220,7 @@ async def get_day_KSprice(exe_day:str):
 async def get_kospi_onceData(exe_day: str):
     await get_day_KSprice(exe_day)
 
-#kosdaq 당일 일봉 수집기
+# kosdaq 당일 일봉 수집기
 async def get_day_KQprice(exe_day:str):
     # 함수들
     logging.info("당일 코스닥 [일봉] 종목 수집 실행")
@@ -267,3 +267,84 @@ async def get_day_KQprice(exe_day:str):
 @app.get("stock-price/kospi-once/day={exe_day}")
 async def get_kosdaq_onceData(exe_day: str):
     await et_day_KQprice(exe_day)
+
+# dart 공시코드 binary 수집코드
+@app.get("/dartcode/all")
+async def get_dart_code():
+
+    import xml.etree.ElementTree as ET
+    import requests
+
+    url = 'https://opendart.fss.or.kr/api/corpCode.xml'
+    dart_api_key = '65fa08efbb23ba02ccb4959a477579a66bbc5637'
+
+    parmas = {'crtfc_key': dart_api_key }
+
+    response = requests.get(url, parmas)
+
+    if response.status_code == 200:
+        with open('/home/yoda/stock/tmp/dart_code.zip', 'wb') as file:
+            file.write(response.content)
+            print("download compelete")
+    else:
+        print("failed status code :", response.status_code)
+
+    zip_path = '/home/yoda/stock/tmp/dart_code.zip'
+    output_path = '/home/yoda/stock/tmp'
+
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(output_path) 
+
+    with open(output_path, 'r', encoding='utf-8') as file:
+        xml_data = file.read()
+
+    root = ET.fromstring(xml_data)
+    data_list = root.findall('list')
+
+    df_data = []
+    for data in data_list:
+        corp_code = data.find('corp_code').text
+        corp_name = data.find('corp_name').text
+        modify_date = data.find('modify_date').text
+        df_data.append({'corp_code': corp_code, 'corp_name': corp_name, 'modify_date': modify_date})
+
+    tmp_file = pd.DataFrame(df_data)
+
+    address = r"/home/yoda/stock/company_info"
+    directory = os.path.join(address, this_year, this_month)
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    file_path = os.path.join(directory, "dart_code.csv")
+    tmp_file.to_csv(path_or_buf=file_path, index=False)
+
+@app.get("/dartcode/db/all")
+async def update_dart_code():
+
+    import mysql.connector, csv
+
+    conn = mysql.connector.connect(user='stock', password= '1234', host='192.168.90.128', database = 'stock', port = '3306', auth_plugin='mysql_native_password')
+
+    dartCode_data =[]
+
+    with open("/home/yoda/stock/company_info/dart_code.csv", "r") as file:
+        reader = csv.reader(file)
+        next(reader)
+        for row in reader:
+            dartCode_data.append(row)
+
+    cursor = conn.cursor()
+
+    for row in dartCode_data:
+        name = row[1].encode('cp949')
+        dart_code = row[0]
+
+        query = 'update kospi_code set dart_code = %s where company_name = %s'
+
+        cursor.execute(query)
+
+    conn.commit()
+
+    conn.close()
+##    
