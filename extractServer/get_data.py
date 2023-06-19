@@ -347,4 +347,60 @@ async def update_dart_code():
     conn.commit()
 
     conn.close()
+
+@app.get("/hdfs/{data_category}/{exe_day}")
+async def upload_to_hdfs(data_category:str, exe_day:str):
+    import subprocess
+
+    data_category = data_category.upper()
+    hdfs_path = ""
+    local_base_path = "/home/yoda/stock"
+    hdfs_base_path = "/user/stock/raw"
+
+    if data_category == 'KOSPI-MINUTE' or 'KOSDAQ-MINUTE':
+
+        category = data_category.split('-')[0]
+        duration = data_category.split('-')[1].lower()
+        to_year = exe_day[:4]
+        to_day = exe_day[5:7] + exe_day[8:10]
+
+        additional_path = f"/price_data/{category}/{duration}/{to_year}/{to_day}"
+
+        local_path = local_base_path + additional_path
+        hdfs_path = hdfs_base_path + additional_path
+
+        command = f"hdfs dfs -mkdir -p {hdfs_path} && hdfs dfs -put {local_path}/* {hdfs_path}/"
+
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+
+@app.get("/check/hdfs/{data_category}/{exe_day}")
+async def check_done_flag(data_category:str, exe_day:str):
+    import subprocess
+
+    data_category = data_category.upper()
+    hdfs_path = ""
+    local_base_path = "/home/yoda/stock"
+
+    if data_category == 'KOSPI-MINUTE' or 'KOSDAQ-MINUTE':
+
+        category = data_category.split('-')[0]
+        duration = data_category.split('-')[1].lower()
+        to_year = exe_day[:4]
+        to_day = exe_day[5:7] + exe_day[8:10]
+
+        additional_path = f"/price_data/{category}/{duration}/{to_year}/{to_day}"
+
+        local_path = local_base_path + additional_path
+
+        done_file_path = os.path.join(local_path, "DONE")
+
+        if os.path.isfile(done_file_path):
+            return "0"
+        else:
+            return "1"
+
+
+
+
+
 ##    

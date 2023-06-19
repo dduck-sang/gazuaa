@@ -84,6 +84,22 @@ market_calendar = PythonOperator(
 get_kospi_data = get_priceData("get_KOSPI_DATA","192.168.90.128:1212/stock-price/kospi-all/day='{{ next_execution_date.strftime('%Y-%m-%d') }}'")
 #get_kospi_data = get_priceData("get_KOSPI_DATA", "192.168.90.128:1212/stock-price/kospi-all/day='exe_day'")
 
+check_done_flag = BashOperator(
+    task_id = 'check_done_file',
+    bash_command="""
+        RETURN_VALUE=$(curl 192.168.90.128:1212/check/hdfs/kospi-minute/{{next_execution_date.strftime('%Y-%m-%d')}})
+        if [[ $RETURN_VALUE == '1' ]]; then
+            exit 999
+        fi
+    """,
+    dag = dag
+)
+
+load_hdfs_data = BashOperator(
+    task_id = 'load_hdfs',
+    bash_command = "curl 192.168.90.128:1212/hdfs/kospi-minute/{{next_execution_date}}",
+    dag = dag)
+
 finish_noti1 = gen_noti("finish_dag_noti1", "종료", "all_success")
 finish_noti2 = gen_noti("finish_dag_noti2", "휴장일","one_failed")
 
@@ -98,6 +114,6 @@ finish = EmptyOperator(
 # 의문점 데이터 정합성을 check하기 위한 방법? 다운 완료는 DONE 플래그 생성으로 check후 >처리
 # DONE_flag는 api server를 둔다. 이유는 다른 부서/회사로 부터 데이터를 받을때, listener server의 권한 문제로 일종의 미들웨어 개념으로 처리하는 하는 방식
 # start >> start_noti >> get_kospi_data >> finish_noti >> finish
-start >> start_noti >> market_calendar >> get_kospi_data >> finish_noti1
+start >> start_noti >> market_calendar >> get_kospi_data >> check_done_flag >> load_hdfs_data >> finish_noti1
 start >> start_noti >> market_calendar >> finish_noti2
 [finish_noti1, finish_noti2] >> finish
