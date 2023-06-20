@@ -32,8 +32,8 @@ gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
 | Python      | 3.8                          | Uvicorn     | 0.22.0                       |
 | Platform    | AMD64/ARM64                  | FastAPI     | 0.95.2                       |
 | Airflow     | 2.6.1                        | Docker      | 24.0.2                       |
-| PostgreSQL  | 12                           |             |                              |
-| MySQL       | 5.7, 8                       |             |                              |
+| PostgreSQL  | 12                           | Spark       | 3.2.4                        |
+| MySQL       | 5.7, 8                       | Zeppelin    | 0.1.0                        |
 | Hadoop      | 3.3.4                        |             |                              |
 
 
