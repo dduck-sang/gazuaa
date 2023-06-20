@@ -124,7 +124,7 @@ async def list_ticker(exe_day: str):
             os.makedirs(directory)
         data.to_csv(file_path)
 
-    done_file = "/home/yoda/stock/price_data/KOSDAQ/minute/2023/{}/DONE".format(to_date)
+    done_file = "/home/yoda/stock/price_data/KOSDAQ/minute/{}/{}/DONE".format(now_year, to_date)
     open(done_file, "w").close()
 
 # kospi 당일 분봉 수집기
@@ -169,7 +169,7 @@ async def get_dayData(exe_day: str):
 
         data.to_csv(file_path)
 
-    done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
+    done_file = "/home/yoda/stock/price_data/KOSPI/minute/{}/{}/DONE".format(now_year, to_date)
     open(done_file, "w").close()
 
 # kospi 당일 일봉 수집기
@@ -213,10 +213,10 @@ async def get_day_KSprice(exe_day:str):
 
         data.to_csv(file_path)
 
-    done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
+    done_file = "/home/yoda/stock/price_data/KOSPI/day/{}/{}/DONE".format(now_year, to_date)
     open(done_file, "w").close()
 
-@app.get("stock-price/kospi-once/day={exe_day}")
+@app.get("/stock-price/kospi-once/day={exe_day}")
 async def get_kospi_onceData(exe_day: str):
     await get_day_KSprice(exe_day)
 
@@ -230,10 +230,10 @@ async def get_day_KQprice(exe_day:str):
     conn = mysql.connector.connect(user='stock', password= '1234', host='192.168.90.128', database = 'stock', port = '3306', auth_plugin='mysql_native_password')
 
     start_date = exe_day
-    market_name = 'KOSPI'
+    market_name = 'KOSDAQ'
 
     cursor = conn.cursor()
-    query = 'select company_code from kospi_code'
+    query = 'select company_code from kosdaq_code'
     cursor.execute(query)
     result = cursor.fetchall()
     conn.close()
@@ -248,7 +248,7 @@ async def get_day_KQprice(exe_day:str):
         next_date = datetime.strftime(start_datetime + timedelta(days=1), "%Y-%m-%d")
 
         now_year = start_date.split('-')[0]
-        info_num = ticker_no.split('.')[0]
+        info_num = ticker_no.strip()split('.')[0]
         to_date = start_date[5:7] + start_date[8:10]
 
         data = yf.download(tickers=ticker_no, start=start_date, end=next_date, interval='1d')
@@ -261,12 +261,13 @@ async def get_day_KQprice(exe_day:str):
 
         data.to_csv(file_path)
 
-    done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
+    done_file = "/home/yoda/stock/price_data/KOSDAQ/day/{}/{}/DONE".format(now_year, to_date)
+    #done_file = "/home/yoda/stock/price_data/KOSPI/minute/2023/{}/DONE".format(to_date)
     open(done_file, "w").close()
 
-@app.get("stock-price/kospi-once/day={exe_day}")
+@app.get("/stock-price/kosdaq-once/day={exe_day}")
 async def get_kosdaq_onceData(exe_day: str):
-    await et_day_KQprice(exe_day)
+    await get_day_KQprice(exe_day)
 
 # dart 공시코드 binary 수집코드
 @app.get("/dartcode/all")
@@ -381,7 +382,7 @@ async def check_done_flag(data_category:str, exe_day:str):
     hdfs_path = ""
     local_base_path = "/home/yoda/stock"
 
-    if data_category == 'KOSPI-MINUTE' or 'KOSDAQ-MINUTE':
+    if data_category == 'KOSPI-MINUTE' or 'KOSDAQ-MINUTE' or 'KOSPI-DAY' or 'KOSDAQ-DAY':
 
         category = data_category.split('-')[0]
         duration = data_category.split('-')[1].lower()
