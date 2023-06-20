@@ -16,7 +16,7 @@ default_args = {
 
 
 #DAG
-dag = DAG('get-currency-dag', default_args=default_args, schedule_interval='0 0 * * *', max_active_runs=2, tags=["수집","환율"])
+dag = DAG('get-currency-dag', default_args=default_args, schedule_interval='0 0 * * 1-5', max_active_runs=2, tags=["수집","환율"])
 
 ## define functions to use
 # 36개 환율 data 가져오는 func
