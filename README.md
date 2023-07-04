@@ -1,12 +1,12 @@
 # 주식 데이터 파이프라인 구축
 
-Project overview
+<h4>Project overview</h4>
 
 해당 프로젝트는 코스피/코스닥 및 각종 금융 지표를 수집하여, dashboard 구축 및 api serving이 목적인 프로젝트입니다. \
 수집한 다양한 금융정보 data를 적재하여, 주가정보 dashboard 및 의사결정에 도움이 되는 다양한 지표를 구현해봅니다. \
 적재된 data를 외부로 부터 제공하는 api 를 빌드 해보는 걸 목표로 가지고있습니다.
 
-
+ 
 ---
 
 **컨텐츠 목차**
@@ -32,8 +32,8 @@ gazuaa는 다음과 같은 환경에서 테스트 하였습니다 :
 | Python      | 3.8                          | Uvicorn     | 0.22.0                       |
 | Platform    | AMD64/ARM64                  | FastAPI     | 0.95.2                       |
 | Airflow     | 2.6.1                        | Docker      | 24.0.2                       |
-| PostgreSQL  | 12                           |             |                              |
-| MySQL       | 5.7, 8                       |             |                              |
+| PostgreSQL  | 12                           | Spark       | 3.2.4                        |
+| MySQL       | 5.7, 8                       | Zeppelin    | 0.1.0                        |
 | Hadoop      | 3.3.4                        |             |                              |
 
 

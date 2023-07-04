@@ -10,7 +10,7 @@ KST = pendulum.timezone("Asia/Seoul")
 default_args = {
 	"owner": "v0.0.5/gazua",
 	"depends_on_past": False,
-	"start_date": datetime(2023, 6, 12, tzinfo=KST),
+	"start_date": datetime(2023, 6, 1, tzinfo=KST),
 	"retries": 0
 }
 
@@ -56,12 +56,9 @@ def gen_noti(name: str, stats: str, role:str):
 
 	return bash_task
 
-
-
 # define variables to use
 # start_param = "{{ next_execution_date.strftime('%Y-%m-%d') }}"
 # end_param = "{{ next_execution_date.strftime('%Y-%m-%d') }}"
-
 
 # task Operators
 start_noti = gen_noti("start_dag_noti", "시작", "all_success")
