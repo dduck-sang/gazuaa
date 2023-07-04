@@ -400,8 +400,28 @@ async def check_done_flag(data_category:str, exe_day:str):
         else:
             return "1"
 
+@app.get("/loadHDFS/{exe_day}")
+async def download_from_hdfs(exe_day:str):
 
+@app.get("/checkHDFS-folder")
+async def check_folder(data_category: str, exe_year: str, exe_period: str):
+    from pywebhdfs.webhdfs import PyWebHdfsClient
+    hdfs = PyWebHdfsClient(host='192.168.90.128', port='9870', user_name='yoda')
+    base_path = '/user/stock/raw/price_data'
 
+    if data_category in ['KOSPI/day', 'KOSDAQ/day'] or data_category in ['KOSPI/minute', 'KOSDAQ/minute']:
+        folder_path = f"{base_path}/{data_category}/{exe_year}/{exe_period}"
+        response = None
+        try:
+            response = hdfs.list_dir(folder_path)
+        except:
+            pass
 
+        if response is None:
+            return {"status": "not exist"}
+        else:
+            return {"status": "success"}
+    else:
+        return {"status": "invalid data category"}
 
 ##    
