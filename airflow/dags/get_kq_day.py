@@ -10,12 +10,12 @@ KST = pendulum.timezone("Asia/Seoul")
 default_args ={
     'owner' : 'v0.0.5/gazua',
     'depends_on_past' : True,
-    'start_date' : datetime(2023, 5, 15, tzinfo=KST)
+    'start_date' : datetime(2019, 1, 1, tzinfo=KST)
     #'start_date' : datetime(2023,6,1, tzinfo=pytz.timezone('Asia/Seoul'))
 }
 
 # utc 기준 7 시로 고치면 되긴함
-dag = DAG('get_kospi_data', default_args = default_args, schedule_interval ='0 16 * * 1-5')
+dag = DAG('get_kospi_data', default_args = default_args, tag=['수집','KQ일봉'],max_active_runs=2, schedule_interval ='0 16 * * 1-5')
 
 param_date = "{{ next_execution_date.strftime('%Y-%m-%d') }}"
 
@@ -81,13 +81,13 @@ market_calendar = PythonOperator(
     dag=dag
     )
 
-get_kospi_data = get_priceData("get_KOSPI_DATA","192.168.90.128:1212/stock-price/kospi-all/day='{{ next_execution_date.strftime('%Y-%m-%d') }}'")
+get_kospi_data = get_priceData("get_KOSPI_DATA","192.168.90.128:1212/stock-price/kosdaq-once/day='{{ next_execution_date.strftime('%Y-%m-%d') }}'")
 #get_kospi_data = get_priceData("get_KOSPI_DATA", "192.168.90.128:1212/stock-price/kospi-all/day='exe_day'")
 
 check_done_flag = BashOperator(
     task_id = 'check_done_file',
     bash_command="""
-        RETURN_VALUE=$(curl 192.168.90.128:1212/check/hdfs/kospi-minute/{{next_execution_date.strftime('%Y-%m-%d')}})
+        RETURN_VALUE=$(curl 192.168.90.128:1212/check/hdfs/kosdaq-day/{{next_execution_date.strftime('%Y-%m-%d')}})
         if [[ $RETURN_VALUE == '1' ]]; then
             exit 999
         fi
@@ -97,7 +97,7 @@ check_done_flag = BashOperator(
 
 load_hdfs_data = BashOperator(
     task_id = 'load_hdfs',
-    bash_command = "curl 192.168.90.128:1212/hdfs/kospi-minute/{{next_execution_date}}",
+    bash_command = "curl 192.168.90.128:1212/hdfs/kosdaq-day/{{next_execution_date}}",
     dag = dag)
 
 finish_noti1 = gen_noti("finish_dag_noti1", "종료", "all_success")

@@ -13,7 +13,7 @@ default_args ={
 	'depends_on_past' : False,
 	'start_date': datetime(2023,1,1, tzinfo=KST)}
 
-dag = DAG('get_company_info', default_args = default_args, max_active_runs= 1,tags=['수집','기업정보'] schedule_interval= '0 10 1 * *')
+dag = DAG('get_company_info', default_args = default_args, max_active_runs= 1, tags=['수집','기업정보'] , schedule_interval= '0 10 1 * *')
 
 def gen_noti(name: str, stats: str, role: str):
 	#line noti 보내는 operator 생성 함수
