@@ -1,0 +1,11 @@
+mysql-connector
+uvicorn
+fastapi
+yfinance
+requests
+finance-datareader
+exchange-calendars
+pytz
+bs4
+pywebhdfs
+configparser
