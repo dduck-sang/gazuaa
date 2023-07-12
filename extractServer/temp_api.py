@@ -57,6 +57,12 @@ async def download_from_hdfs(data_category: str, exe_day: str):
         local_path = f"{local_base_path}{additional_path}/{path_suffix}"
         hdfs_path = f"{hdfs_base_path}{additional_path}/{path_suffix}"
 
+        command1 = f"mkdir -p {local_path}"
+        subprocess.run(command1, shell=True, capture_output=True, text=True)
+
+        command2 = f"hdfs dfs -copyToLocal {hdfs_path}/* {local_path}"
+        result = subprocess.run(command2, shell=True, capture_output=True, text=True)
+
     elif data_category in ['KOSPI-MINUTE', 'KOSDAQ-MINUTE']:
         category = data_category.split('-')[0]
         duration = data_category.split('-')[1].lower()
@@ -78,12 +84,12 @@ async def download_from_hdfs(data_category: str, exe_day: str):
 # check hdfs folder에서 True면 이 function(concat)을 한 후에 -> put hdfs function
 @app.get("concat-min-data/data_category={data_category}/exe_day={exe_day}")
 async def concat_min_data(data_category:str, exe_day:str):
-    year, month, day = exe.day.split('-')
-    start_date = exe_day
-    next_date = datetime.strftime(start_date + timedelta(days=1), "%Y-%m-%d")
+    year, month, day = exe_day.split('-')
+    start_date = datetime.strptime(exe_day, "%Y-%m-%d")
+    next_date = (start_date + timedelta(days=1)).strftime("%Y-%m-%d")
 
     local_base_path = "/home/yoda/stock"
-    market_name , duration = data_category.split('/')
+    market_name , duration = data_category.split('-')
     duration = duration.lower()
     additional_path = f"/price_data/{market_name}/{duration}/{year}/{month}{day}"
 
@@ -91,7 +97,7 @@ async def concat_min_data(data_category:str, exe_day:str):
 
     conn = mysql.connector.connect(user='stock', password='1234', host='192.168.90.128', database='stock', port='3306', auth_plugin='mysql_native_password')
     cursor = conn.cursor()
-    query = 'select company_code from kospi_code'
+    query = 'select company_code from {}_kode'.format(market_name.lower())
     cursor.execute(query)
     result = cursor.fetchall()
     conn.close()
@@ -116,14 +122,14 @@ async def concat_min_data(data_category:str, exe_day:str):
 
 # 일봉 데이터, HDFS에서 다운받은 기존데이터 & 당일에 yFinance로 내려받은 데이터 concat하는 함수
 # check hdfs folder에서 True면 이 function(concat)을 한 후에 -> put hdfs function
-@app.get("concat-day-data/data_category={data_category}/exe_day={exe_day}")
+@app.get("/concat-day-data/data_category={data_category}/exe_day={exe_day}")
 async def concat_day_data(data_category:str, exe_day:str):
-    year, month, day = exe.day.split('-')
-    start_date = exe_day
-    next_date = datetime.strftime(start_date + timedelta(days=1), "%Y-%m-%d")
+    year, month, day = exe_day.split('-')
+    start_date = datetime.strptime(exe_day, "%Y-%m-%d")
+    next_date = (start_date + timedelta(days=1)).strftime("%Y-%m-%d")
 
     local_base_path = "/home/yoda/stock"
-    market_name , duration = data_category.split('/')
+    market_name , duration = data_category.split('-')
     duration = duration.lower()
     additional_path = f"/price_data/{market_name}/{duration}/{year}/{month}{day}"
 
@@ -131,7 +137,7 @@ async def concat_day_data(data_category:str, exe_day:str):
 
     conn = mysql.connector.connect(user='stock', password='1234', host='192.168.90.128', database='stock', port='3306', auth_plugin='mysql_native_password')
     cursor = conn.cursor()
-    query = 'select company_code from kospi_code'
+    query = 'select company_code from {}_kode'.format(market_name.lower())
     cursor.execute(query)
     result = cursor.fetchall()
     conn.close()
