@@ -248,7 +248,7 @@ async def get_day_KQprice(exe_day:str):
         next_date = datetime.strftime(start_datetime + timedelta(days=1), "%Y-%m-%d")
 
         now_year = start_date.split('-')[0]
-        info_num = ticker_no.strip()split('.')[0]
+        info_num = ticker_no.strip().split('.')[0]
         to_date = start_date[5:7] + start_date[8:10]
 
         data = yf.download(tickers=ticker_no, start=start_date, end=next_date, interval='1d')
