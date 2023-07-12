@@ -65,12 +65,13 @@ async def download_from_hdfs(data_category: str, exe_day: str):
         local_path = f"{local_base_path}{additional_path}/{month}"
         hdfs_path = f"{hdfs_base_path}{additional_path}/{month}"
 
-        command = f"hdfs dfs -copyToLocal -r {hdfs_path} {local_path}"
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+		command1 = f"mkdir -p {local_path}"
+        subprocess.run(command1, shell=True, capture_output=True, text=True)
+
+        command2 = f"hdfs dfs -copyToLocal {hdfs_path}/* {local_path}"
+        result = subprocess.run(command2, shell=True, capture_output=True, text=True)
     else:
         return "Invalid data category"
-
-    return result.stdout
 
 
 # 분봉 데이터, HDFS에서 다운받은 기존데이터 & 당일에 yFinance로 내려받은 데이터 concat하는 함수
