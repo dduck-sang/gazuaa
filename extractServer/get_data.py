@@ -583,13 +583,39 @@ async def local_path_to_hdfs_path(data_category:str, exe_day:str):
     market_name , duration = data_category.split('-')
     duration = duration.lower()
 
-    local_base_path = "/home/yoda/stock"
-    additional_path = f"/price_data/{market_name}/{duration}/{year}/{month}{day}"
-    local_data_path = f"{local_base_path}{additional_path}"
+    if data_category in ['KOSPI-day', 'KOSDAQ-day']:
 
-    copied_hdfs_base_path = f"/home/yoda/stock/raw/price_data/{market_name}/{duration}/{year}/{month}"
+        if month in ['01', '02', '03']:
+            path_suffix = "1"
+        elif month in ['04', '05', '06']:
+            path_suffix = "2"
+        elif month in ['07', '08', '09']:
+            path_suffix = "3"
+        elif month in ['10', '11', '12']:
+            path_suffix = "4"
+        else:
+            return "Invalid month"
 
-    command = f"cp -r {local_data_path} {copied_hdfs_base_path}"
-    result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        local_base_path = "/home/yoda/stock"
+        additional_path = f"/price_data/{market_name}/{duration}/{year}/{path_suffix}"
+        local_data_path = f"{local_base_path}{additional_path}"
 
+        copied_hdfs_base_path = f"/home/yoda/stock/raw/price_data/{market_name}/{duration}/{year}/{path_suffix}"
+
+        command = f"mkdir -p {copied_hdfs_base_path} && cp -r {local_data_path} {copied_hdfs_base_path}"
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+
+    elif data_category in ['KOSPI-minute', 'KOSDAQ-minute']:
+
+        local_base_path = "/home/yoda/stock"
+        additional_path = f"/price_data/{market_name}/{duration}/{year}/{month}"
+        local_data_path = f"{local_base_path}{additional_path}"
+
+        copied_hdfs_base_path = f"/home/yoda/stock/raw/price_data/{market_name}/{duration}/{year}/{month}"
+
+        command = f"mkdir -p {copied_hdfs_base_path} && cp -r {local_data_path} {copied_hdfs_base_path}"
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+
+    else :
+        return "Invalid data category"
 
